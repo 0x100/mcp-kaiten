@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  ai:
+    mcp:
+      server:
+        name: kaiten-mcp
+        instructions: >
+          Набор инструментов для работы с Kaiten: поиск карточек, чтение
+        type: SYNC
+        base-url: /mcp
+        sse-endpoint: /sse
+        sse-message-endpoint: /message
+        stdio: false
+
+kaiten:
+  api-url: ${KAITEN_API_URL}  # https://YOUR_SPACE.kaiten.ru/api/v1
+  api-token: ${KAITEN_API_TOKEN}
+
+security:
+  bearer-token: ${MCP_BEARER_TOKEN:}
