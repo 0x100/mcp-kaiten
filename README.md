@@ -1,2 +1,1 @@
-# kaiten-mcp-server
-Kaiten MCP Server (Spring AI)
+# MCP Server for Kaiten implemented with Spring AI
