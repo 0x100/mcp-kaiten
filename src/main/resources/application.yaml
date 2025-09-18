@@ -12,7 +12,7 @@ spring:
         base-url: /mcp
         sse-endpoint: /sse
         sse-message-endpoint: /message
-        stdio: ${MCP_STDIO:false}
+        stdio: false
 
 kaiten:
   api-url: ${KAITEN_API_URL:}
