@@ -9,10 +9,13 @@ spring:
         instructions: >
           Набор инструментов для работы с Kaiten: поиск карточек, чтение
         type: SYNC
-        base-url: /mcp
-        sse-endpoint: /sse
-        sse-message-endpoint: /message
+        sse-endpoint: /mcp/sse
+        sse-message-endpoint: /mcp/message
         stdio: false
+
+logging:
+  level:
+    io.modelcontextprotocol: DEBUG
 
 kaiten:
   api-url: ${KAITEN_API_URL:}
