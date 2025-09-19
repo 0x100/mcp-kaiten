@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Component;
-import ru.coder1.mcp.kaiten.client.KaitenClientImpl;
+import ru.coder1.mcp.kaiten.client.KaitenClient;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,7 +16,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class KaitenTools {
 
-    private final KaitenClientImpl kaitenClient;
+    private final KaitenClient kaitenClient;
 
     // ---------- SPACES ----------
     @Tool(
@@ -81,41 +81,41 @@ public class KaitenTools {
     ) {
         Map<String, Object> params = new LinkedHashMap<>();
         // обязательные
-        params.put("spaceId", spaceId);
-        params.put("boardId", boardId);
+        params.put("space_id", spaceId);
+        params.put("board_id", boardId);
         // текстовый запрос
-        if (query != null && !query.isBlank()) params.put("query", query);
+        putIfNotBlank(params, "query", query);
 
         // точные/доп. фильтры
-        if (title != null) params.put("title", title);
-        if (externalId != null) params.put("externalId", externalId);
-        if (columnId != null) params.put("columnId", columnId);
-        if (laneId != null) params.put("laneId", laneId);
-        if (ownerId != null) params.put("ownerId", ownerId);
-        if (asap != null) params.put("asap", asap);
-        if (status != null) params.put("status", status);
+        putIfNotBlank(params, "title", title);
+        putIfNotBlank(params, "external_id", externalId);
+        putIfNotNull(params, "column_id", columnId);
+        putIfNotNull(params, "lane_id", laneId);
+        putIfNotNull(params, "owner_id", ownerId);
+        putIfNotNull(params, "asap", asap);
+        putIfNotBlank(params, "status", status);
 
         // списки (CSV -> массив)
         if (assigneeIdsCsv != null && !assigneeIdsCsv.isBlank()) {
-            params.put("assigneeIds", parseCsvToLongList(assigneeIdsCsv));
+            params.put("assignee_ids[]", parseCsvToLongList(assigneeIdsCsv));
         }
         if (tagIdsCsv != null && !tagIdsCsv.isBlank()) {
-            params.put("tagIds", parseCsvToLongList(tagIdsCsv));
+            params.put("tag_ids[]", parseCsvToLongList(tagIdsCsv));
         }
 
         // даты/диапазоны
-        if (dueDateFrom != null) params.put("dueDateFrom", dueDateFrom);
-        if (dueDateTo != null) params.put("dueDateTo", dueDateTo);
-        if (createdAtFrom != null) params.put("createdAtFrom", createdAtFrom);
-        if (createdAtTo != null) params.put("createdAtTo", createdAtTo);
-        if (updatedAtFrom != null) params.put("updatedAtFrom", updatedAtFrom);
-        if (updatedAtTo != null) params.put("updatedAtTo", updatedAtTo);
+        putIfNotBlank(params, "due_date_from", dueDateFrom);
+        putIfNotBlank(params, "due_date_to", dueDateTo);
+        putIfNotBlank(params, "created_at_from", createdAtFrom);
+        putIfNotBlank(params, "created_at_to", createdAtTo);
+        putIfNotBlank(params, "updated_at_from", updatedAtFrom);
+        putIfNotBlank(params, "updated_at_to", updatedAtTo);
 
         // сортировка/пагинация
-        if (orderBy != null) params.put("orderBy", orderBy);
-        if (orderDir != null) params.put("orderDir", orderDir);
-        if (limit != null) params.put("limit", limit);
-        if (offset != null) params.put("offset", offset);
+        putIfNotBlank(params, "order_by", orderBy);
+        putIfNotBlank(params, "order_dir", orderDir);
+        putIfNotNull(params, "limit", limit);
+        putIfNotNull(params, "offset", offset);
 
         return kaitenClient.listCards(params);
     }
@@ -132,11 +132,11 @@ public class KaitenTools {
             @ToolParam(description = "Смещение (offset) записей") Integer offset
     ) {
         Map<String, Object> params = new LinkedHashMap<>();
-        params.put("spaceId", spaceId);
-        params.put("boardId", boardId);
+        params.put("space_id", spaceId);
+        params.put("board_id", boardId);
         params.put("query", query);
-        if (limit != null) params.put("limit", limit);
-        if (offset != null) params.put("offset", offset);
+        putIfNotNull(params, "limit", limit);
+        putIfNotNull(params, "offset", offset);
         return kaitenClient.listCards(params);
     }
 
@@ -171,20 +171,20 @@ public class KaitenTools {
             @ToolParam(description = "Сортировка: направление (orderDir): asc|desc") String orderDir
     ) {
         Map<String, Object> params = new LinkedHashMap<>();
-        if (from != null) params.put("from", from);
-        if (to != null) params.put("to", to);
+        putIfNotBlank(params, "from", from);
+        putIfNotBlank(params, "to", to);
         if (userIdsCsv != null && !userIdsCsv.isBlank()) {
-            params.put("userIds", parseCsvToLongList(userIdsCsv));
+            params.put("user_ids[]", parseCsvToLongList(userIdsCsv));
         }
         if (cardIdsCsv != null && !cardIdsCsv.isBlank()) {
-            params.put("cardIds", parseCsvToLongList(cardIdsCsv));
+            params.put("card_ids[]", parseCsvToLongList(cardIdsCsv));
         }
-        if (spaceId != null) params.put("spaceId", spaceId);
-        if (boardId != null) params.put("boardId", boardId);
-        if (limit != null) params.put("limit", limit);
-        if (offset != null) params.put("offset", offset);
-        if (orderBy != null) params.put("orderBy", orderBy);
-        if (orderDir != null) params.put("orderDir", orderDir);
+        putIfNotNull(params, "space_id", spaceId);
+        putIfNotNull(params, "board_id", boardId);
+        putIfNotNull(params, "limit", limit);
+        putIfNotNull(params, "offset", offset);
+        putIfNotBlank(params, "order_by", orderBy);
+        putIfNotBlank(params, "order_dir", orderDir);
         return kaitenClient.getTimesheets(params);
     }
 
@@ -195,5 +195,17 @@ public class KaitenTools {
                 .filter(s -> !s.isEmpty())
                 .map(Long::valueOf)
                 .toList();
+    }
+
+    private static void putIfNotBlank(Map<String, Object> target, String key, String value) {
+        if (value != null && !value.isBlank()) {
+            target.put(key, value);
+        }
+    }
+
+    private static void putIfNotNull(Map<String, Object> target, String key, Object value) {
+        if (value != null) {
+            target.put(key, value);
+        }
     }
 }
