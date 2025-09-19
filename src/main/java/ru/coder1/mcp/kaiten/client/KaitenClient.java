@@ -1,32 +1,22 @@
 package ru.coder1.mcp.kaiten.client;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
-
+import java.util.List;
 import java.util.Map;
 
-@Component
-@SuppressWarnings("all")
-@RequiredArgsConstructor
-public class KaitenClient {
+public interface KaitenClient {
 
-    private final RestClient client;
+    // spaces
+    Map<String, Object> getSpaces(Integer limit, Integer offset, Boolean includeArchived);
 
+    // boards
+    Map<String, Object> getBoards(Long spaceId, Integer limit, Integer offset, Boolean includeArchived);
 
-    public Map<String, Object> getCard(String cardId) {
-        return client.get()
-                .uri("/cards/{id}", cardId)
-                .retrieve()
-                .body(Map.class);
-    }
+    // cards list/search (retrieve-card-list)
+    Map<String, Object> listCards(Map<String, Object> params);
 
-    public Map<String, Object> searchCards(String query) {
-        return client.get()
-                .uri(uriBuilder -> uriBuilder.path("/cards")
-                        .queryParam("query", query).build())
-                .retrieve()
-                .body(Map.class);
-    }
+    // card by id (retrieve-card) + optional include expansions
+    Map<String, Object> getCard(String cardId, List<String> include);
+
+    // timesheets (timesheet/get-list)
+    Map<String, Object> getTimesheets(Map<String, Object> params);
 }
