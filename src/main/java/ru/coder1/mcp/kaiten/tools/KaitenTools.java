@@ -18,12 +18,12 @@ public class KaitenTools {
 
     private final KaitenClient kaitenClient;
 
-    // ---------- SPACES ----------
+
     @Tool(
             name = "kaiten.getSpaces",
             description = "Получить список пространств (spaces). Поддерживает пагинацию."
     )
-    public Map<String, Object> getSpaces(
+    public Object getSpaces(
             @ToolParam(description = "Лимит записей на страницу (по умолчанию 50)") Integer limit,
             @ToolParam(description = "Смещение (offset) записей") Integer offset,
             @ToolParam(description = "Включать ли архивные пространства (true/false)") Boolean includeArchived
@@ -31,12 +31,11 @@ public class KaitenTools {
         return kaitenClient.getSpaces(limit, offset, includeArchived);
     }
 
-    // ---------- BOARDS ----------
     @Tool(
             name = "kaiten.getBoards",
             description = "Получить список досок (boards) в указанном пространстве. Поддерживает пагинацию."
     )
-    public Map<String, Object> getBoards(
+    public Object getBoards(
             @ToolParam(description = "ID пространства (spaceId)", required = true) Long spaceId,
             @ToolParam(description = "Лимит записей на страницу (по умолчанию 50)") Integer limit,
             @ToolParam(description = "Смещение (offset) записей") Integer offset,
@@ -45,13 +44,12 @@ public class KaitenTools {
         return kaitenClient.getBoards(spaceId, limit, offset, includeArchived);
     }
 
-    // ---------- CARDS: LIST/SEARCH ----------
     @Tool(
             name = "kaiten.listCards",
             description = "Список карточек в рамках space/board с фильтрами (аналог retrieve-card-list). " +
                     "Минимально требуются spaceId и boardId."
     )
-    public Map<String, Object> listCards(
+    public Object listCards(
             @ToolParam(description = "ID пространства (spaceId)", required = true) Long spaceId,
             @ToolParam(description = "ID доски (boardId)", required = true) Long boardId,
             @ToolParam(description = "Текстовый запрос (поиск по названию/описанию — зависит от настроек API)") String query,
@@ -120,11 +118,13 @@ public class KaitenTools {
         return kaitenClient.listCards(params);
     }
 
+    // ---------- helpers ----------
+
     @Tool(
             name = "kaiten.searchCards",
             description = "Поиск карточек по текстовому запросу ВНУТРИ указанного пространства и доски."
     )
-    public Map<String, Object> searchCards(
+    public Object searchCards(
             @ToolParam(description = "ID пространства (spaceId)", required = true) Long spaceId,
             @ToolParam(description = "ID доски (boardId)", required = true) Long boardId,
             @ToolParam(description = "Текстовый запрос (query)", required = true) String query,
@@ -140,9 +140,8 @@ public class KaitenTools {
         return kaitenClient.listCards(params);
     }
 
-    // ---------- CARD: GET ----------
     @Tool(name = "kaiten.getCard", description = "Получить карточку по её ID (retrieve-card). Можно запросить расширенное представление.")
-    public Map<String, Object> getCard(
+    public Object getCard(
             @ToolParam(description = "ID карточки (cardId)", required = true) String cardId,
             @ToolParam(description = "Список дополнительных полей/сущностей для расширения ответа (через запятую), напр. customProperties,tags,attachments") String includeCsv
     ) {
@@ -152,13 +151,12 @@ public class KaitenTools {
         return kaitenClient.getCard(cardId, include);
     }
 
-    // ---------- TIMESHEETS ----------
     @Tool(
             name = "kaiten.getTimesheets",
             description = "Получить списания времени (timesheets) c фильтрами по датам/пользователям/карточкам. " +
                     "Поддерживает пагинацию."
     )
-    public Map<String, Object> getTimesheets(
+    public Object getTimesheets(
             @ToolParam(description = "Дата/время с (ISO 8601), напр. 2025-09-01T00:00:00Z") String from,
             @ToolParam(description = "Дата/время по (ISO 8601), напр. 2025-09-30T23:59:59Z") String to,
             @ToolParam(description = "ID пользователей (userIds), через запятую") String userIdsCsv,
@@ -188,7 +186,6 @@ public class KaitenTools {
         return kaitenClient.getTimesheets(params);
     }
 
-    // ---------- helpers ----------
     private static List<Long> parseCsvToLongList(String csv) {
         return Arrays.stream(csv.split(","))
                 .map(String::trim)
